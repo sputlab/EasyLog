@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traccia Attività</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #timerDisplay {
+            font-size: 20px;
+            text-align: center;
+            margin-top: 10px;
+            color: #555;
+        }
+        #totalDuration {
+            font-size: 16px;
+            text-align: center;
+            color: #777;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button.stop {
+            background-color: #dc3545;
+        }
+        button.reset {
+            background-color: #007bff;
+        }
+        button.export {
+            background-color: #ffc107;
+        }
+        .activities {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .activity {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow-wrap: break-word;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Aggiunto per allineare gli elementi */
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 12px;
+            align-self: flex-end; /* Allineato a destra */
+            margin-top: 10px; /* Spaziatura sopra per separarlo dal contenuto */
+        }
+        .separator {
+            border-top: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        .activity textarea {
+            width: calc(100% - 20px); /* Riduco la larghezza per il textarea per farlo stare meglio */
+            resize: vertical; /* Consente di ridimensionare verticalmente */
+            min-height: 40px; /* Altezza minima */
+            overflow-wrap: break-word; /* Consente di andare a capo correttamente */
+            word-wrap: break-word; /* Aggiunto per migliorare la compatibilità */
+            white-space: normal; /* Permette di andare a capo */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Traccia Attività</h1>
+        <div class="input-group">
+            <label for="description">Descrizione Attività</label>
+            <textarea id="description" rows="3" placeholder="Descrizione Attività"></textarea>
+        </div>
+        <div id="timerDisplay">00:00:00</div>
+        <div id="totalDuration">Durata Totale: 00:00:00</div>
+        <button id="startStopBtn">Avvia</button>
+        <button id="resetBtn" class="reset">Reset Lista</button>
+        <button id="exportBtn" class="export">Esporta in PDF</button>
+        <div class="activities" id="activityList"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        let timer;
+        let startTime;
+        let isRunning = false;
+        let elapsedTime = 0;
+
+        const startStopBtn = document.getElementById('startStopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const descriptionInput = document.getElementById('description');
+        const activityList = document.getElementById('activityList');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const totalDurationDisplay = document.getElementById('totalDuration');
+
+        startStopBtn.addEventListener('click', function () {
+            if (!isRunning) {
+                startTime = new Date();
+                timer = setInterval(updateTimerDisplay, 1000);
+                startStopBtn.textContent = 'Ferma';
+                startStopBtn.classList.add('stop');
+                isRunning = true;
+            } else {
+                clearInterval(timer);
+                const endTime = new Date();
+                elapsedTime = endTime - startTime;
+                const timeSpent = Math.floor(elapsedTime / 1000);
+                const description = descriptionInput.value.trim() || "Descrizione Attività"; // Imposta il testo predefinito
+
+                saveActivity(description, formatTime(timeSpent), startTime, endTime);
+                renderActivities();
+                updateTotalDuration();
+
+                descriptionInput.value = ''; // Reset del campo di input
+                timerDisplay.textContent = "00:00:00";
+                elapsedTime = 0;
+                startStopBtn.textContent = 'Avvia';
+                startStopBtn.classList.remove('stop');
+                isRunning = false;
+            }
+        });
+
+        resetBtn.addEventListener('click', function() {
+            if (confirm("Sei sicuro di voler resettare la lista delle attività?")) {
+                localStorage.removeItem('activities');
+                renderActivities();
+                updateTotalDuration();
+            }
+        });
+
+        exportBtn.addEventListener('click', function() {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Lista Attività Salvate', 10, 10);
+            doc.setFontSize(12);
+
+            let yPosition = 20;
+            activities.forEach(activity => {
+                const lines = doc.splitTextToSize(`Attività: ${activity.description}`, 190);
+                lines.forEach((line) => {
+                    if (yPosition + 6 > doc.internal.pageSize.getHeight() - 10) { // Controllo se c'è spazio sulla pagina
+                        doc.addPage(); // Aggiungo una nuova pagina
+                        yPosition = 10; // Resetta la posizione verticale
+                    }
+                    doc.text(line, 10, yPosition);
+                    yPosition += 6;
+                });
+                doc.text(`Inizio: ${activity.startTime}`, 10, yPosition);
+                yPosition += 6;
+                doc.text(`Fine: ${activity.endTime}`, 10, yPosition);
+                yPosition += 6;
+                doc.text(`Tempo: ${activity.timeSpent}`, 10, yPosition);
+                yPosition += 12;
+
+                doc.setDrawColor(200);
+                doc.line(10, yPosition, 200, yPosition);
+                yPosition += 5;
+            });
+
+            const totalDuration = totalDurationDisplay.textContent;
+            doc.text(totalDuration, 10, yPosition + 10);
+
+            const now = new Date();
+            const fileName = `attivita_${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}.pdf`;
+            doc.save(fileName);
+        });
+
+        function updateTimerDisplay() {
+            const currentTime = new Date();
+            const timeSpent = Math.floor((currentTime - startTime) / 1000);
+            timerDisplay.textContent = formatTime(timeSpent);
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        function saveActivity(description, timeSpent, startTime, endTime) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.push({
+                description,
+                timeSpent,
+                startTime: startTime.toLocaleTimeString(),
+                endTime: endTime.toLocaleTimeString(),
+            });
+            localStorage.setItem('activities', JSON.stringify(activities));
+        }
+
+        function renderActivities() {
+            activityList.innerHTML = '';
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.forEach((activity, index) => {
+                const activityEl = document.createElement('div');
+                activityEl.classList.add('activity');
+                activityEl.innerHTML = `
+                    <div><strong>Attività:</strong> <textarea onchange="editActivity(${index}, this.value)" rows="2">${activity.description}</textarea></div>
+                    <div><strong>Inizio:</strong> ${activity.startTime}</div>
+                    <div><strong>Fine:</strong> ${activity.endTime}</div>
+                    <div><strong>Tempo:</strong> ${activity.timeSpent}</div>
+                    <button class="delete-btn" onclick="confirmDeleteActivity(${index})">Elimina</button>
+                `;
+                activityList.appendChild(activityEl);
+                const separator = document.createElement('div');
+                separator.classList.add('separator');
+                activityList.appendChild(separator);
+            });
+        }
+
+        function confirmDeleteActivity(index) {
+            if (confirm("Sei sicuro di voler eliminare questa attività?")) {
+                deleteActivity(index);
+            }
+        }
+
+        function editActivity(index, newDescription) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities[index].description = newDescription;
+            localStorage.setItem('activities', JSON.stringify(activities));
+            renderActivities();
+        }
+
+        function deleteActivity(index) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.splice(index, 1);
+            localStorage.setItem('activities', JSON.stringify(activities));
+            renderActivities();
+            updateTotalDuration();
+        }
+
+        function updateTotalDuration() {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            const totalSeconds = activities.reduce((sum, activity) => sum + parseTime(activity.timeSpent), 0);
+            totalDurationDisplay.textContent = `Durata Totale: ${formatTime(totalSeconds)}`;
+        }
+
+        function parseTime(timeString) {
+            const parts = timeString.split(':');
+            return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+        }
+
+        window.onload = function() {
+            renderActivities();
+            updateTotalDuration();
+        };
+    </script>
+</body>
+</html>
