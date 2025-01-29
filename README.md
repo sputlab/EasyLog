@@ -9,7 +9,8 @@ The web app features a clear and easy-to-use interface. The layout of the elemen
 Logging activities is straightforward and direct. There are three main elements:
 - **Activity Description**: A text field to enter the description of the activity.
 - **Timer**: A stopwatch that starts counting time as soon as the "Start" button is pressed, with updates every second, displaying the elapsed time in HH:MM:SS format.
-- **Start/Stop Button**: Allows users to start or stop the timer, recording the elapsed time once the activity is completed.
+- **Start/Pause Button**: Allows users to start, pause and resume the timer, recording the elapsed time once the activity is completed.
+- **Save Log Button**: Allows users to record the elapsed time and activity description once the activity is completed.
 
 ## 3. Activity Management
 Logged activities are displayed in a list below the timer. Each activity shows:
@@ -19,9 +20,10 @@ Logged activities are displayed in a list below the timer. Each activity shows:
 
 ## 4. Activity Deletion
 Each activity has a delete button that allows for easy removal of entries that are no longer needed. Deletion must be confirmed.
+Reset List will clear the entire worklog list and reset all the timers. Deletion must be confirmed.
 
 ## 5. PDF Export
-A useful feature is the option to export all activities into a PDF document. This is done by pressing the "Export to PDF" button. The generated file includes all activity details, and the filename includes the date and time of export in Italian format (attivita_GG-MM-AAAA_HH-MM-SS.pdf).
+A useful feature is the option to export all activities into a PDF document. This is done by pressing the "Export to PDF" button. The generated file includes all activity details, and the filename includes the date and time of export in ISO 8601 international format (activities_AAAA-MM-GG_HH:MM:SS.pdf).
 
 ## 6. Browser Storage
 The web app does not require external databases; it uses the browser's Local Storage to maintain logged activities. This way, even if the page is reloaded or the browser is closed, the information remains available upon the next access.
@@ -29,7 +31,10 @@ The web app does not require external databases; it uses the browser's Local Sto
 ## 7. Responsive Design
 The app is designed to adapt to different screen sizes, making it usable from desktops, laptops, or mobile devices without compromising usability.
 
-## 8. Simplicity and Maintenance
+## 8. Dark Theme
+The web app includes a switch that allows you to toggle between Dark and Light themes based on your preference.
+
+## 9. Simplicity and Maintenance
 The code is developed in HTML, CSS, and JavaScript. It utilizes libraries like jsPDF for PDF generation. It has been designed to be simple and modular, facilitating future updates or additions.
 
 ## Conclusion
