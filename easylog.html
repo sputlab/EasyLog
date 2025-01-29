@@ -1,341 +1,408 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EasyLog</title>
     <style>
+        /* Basic styling for the body */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            font-family: Arial, sans-serif; /* Use Arial font */
+            background-color: #f4f4f9; /* Light gray background */
+            color: #333; /* Dark gray text */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            min-height: 100%; /* Ensure the body takes at least the full height of the viewport */
+            display: flex; /* Use flexbox for layout */
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align content to the top */
         }
+
+        /* Container for the main content */
         .container {
-            width: 90%;
-            max-width: 400px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-            margin-bottom: 20px;
+            width: 90%; /* Take up 90% of the width */
+            max-width: 400px; /* Maximum width of 400px */
+            background-color: white; /* White background */
+            padding: 20px; /* Add padding inside the container */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin-top: 20px; /* Add margin at the top */
+            margin-bottom: 20px; /* Add margin at the bottom */
         }
+
+        /* Styling for the main heading */
         h1 {
-            text-align: center;
-            margin-bottom: 20px;
+            text-align: center; /* Center the heading */
+            margin-bottom: 20px; /* Add space below the heading */
         }
+
+        /* Styling for input groups (label + input/textarea) */
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 20px; /* Add space below each input group */
         }
+
+        /* Styling for labels */
         .input-group label {
-            display: block;
-            margin-bottom: 8px;
+            display: block; /* Make labels block-level elements */
+            margin-bottom: 8px; /* Add space below the label */
         }
+
+        /* Styling for input fields and textareas */
         .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            width: 100%; /* Take up full width */
+            padding: 10px; /* Add padding inside the input */
+            border-radius: 5px; /* Rounded corners */
+            border: 1px solid #ddd; /* Light gray border */
         }
+
+        /* Styling for the timer display */
         #timerDisplay {
-            font-size: 20px;
-            text-align: center;
-            margin-top: 10px;
-            color: #555;
+            font-size: 20px; /* Larger font size */
+            text-align: center; /* Center the text */
+            margin-top: 10px; /* Add space above the timer */
+            color: #555; /* Medium gray text */
         }
+
+        /* Styling for the total duration display */
         #totalDuration {
-            font-size: 16px;
-            text-align: center;
-            color: #777;
+            font-size: 16px; /* Medium font size */
+            text-align: center; /* Center the text */
+            color: #777; /* Light gray text */
         }
+
+        /* Styling for buttons */
         button {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 10px;
+            width: 100%; /* Take up full width */
+            padding: 10px; /* Add padding inside the button */
+            background-color: #28a745; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Medium font size */
+            margin-bottom: 10px; /* Add space below the button */
         }
+
+        /* Styling for the stop button */
         button.stop {
-            background-color: #dc3545;
+            background-color: #dc3545; /* Red background */
         }
+
+        /* Styling for the save button */
+        button.save {
+            background-color: #17a2b8; /* Teal background */
+        }
+
+        /* Styling for the reset button */
         button.reset {
-            background-color: #007bff;
+            background-color: #007bff; /* Blue background */
         }
+
+        /* Styling for the export button */
         button.export {
-            background-color: #ffc107;
+            background-color: #ffc107; /* Yellow background */
         }
+
+        /* Styling for the activities list */
         .activities {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
+            margin-top: 20px; /* Add space above the activities list */
+            max-height: 300px; /* Limit the height of the list */
+            overflow-y: auto; /* Add a scrollbar if the content overflows */
         }
+
+        /* Styling for individual activity items */
         .activity {
-            padding: 15px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            position: relative;
-            overflow-wrap: break-word;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; /* Aggiunto per allineare gli elementi */
+            padding: 15px; /* Add padding inside the activity */
+            background-color: #f9f9f9; /* Light gray background */
+            border: 1px solid #ddd; /* Light gray border */
+            border-radius: 5px; /* Rounded corners */
+            margin-bottom: 10px; /* Add space below each activity */
+            position: relative; /* Position relative for child elements */
+            overflow-wrap: break-word; /* Break long words to prevent overflow */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack child elements vertically */
+            justify-content: space-between; /* Space out child elements */
         }
+
+        /* Styling for the delete button inside activities */
         .delete-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            padding: 5px 10px;
-            font-size: 12px;
-            align-self: flex-end; /* Allineato a destra */
-            margin-top: 10px; /* Spaziatura sopra per separarlo dal contenuto */
+            background-color: #dc3545; /* Red background */
+            color: white; /* White text */
+            border: none; /* Remove border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            padding: 5px 10px; /* Add padding inside the button */
+            font-size: 12px; /* Small font size */
+            align-self: flex-end; /* Align the button to the right */
+            margin-top: 10px; /* Add space above the button */
         }
+
+        /* Styling for separators between activities */
         .separator {
-            border-top: 1px solid #ddd;
-            margin: 10px 0;
+            border-top: 1px solid #ddd; /* Light gray border */
+            margin: 10px 0; /* Add space above and below the separator */
         }
+
+        /* Styling for textareas inside activities */
         .activity textarea {
-            width: calc(100% - 20px); /* Riduco la larghezza per il textarea per farlo stare meglio */
-            resize: vertical; /* Consente di ridimensionare verticalmente */
-            min-height: 40px; /* Altezza minima */
-            overflow-wrap: break-word; /* Consente di andare a capo correttamente */
-            word-wrap: break-word; /* Aggiunto per migliorare la compatibilità */
-            white-space: normal; /* Permette di andare a capo */
+            width: calc(100% - 20px); /* Take up full width minus padding */
+            resize: vertical; /* Allow vertical resizing */
+            min-height: 40px; /* Minimum height */
+            overflow-wrap: break-word; /* Break long words to prevent overflow */
+            word-wrap: break-word; /* Alternative for older browsers */
+            white-space: normal; /* Allow text to wrap */
         }
     </style>
 </head>
 <body>
-
+    <!-- Main container for the app -->
     <div class="container">
-        <h1>EasyLog</h1>
+        <h1>EasyLog</h1> <!-- Main heading -->
         <div class="input-group">
-            <label for="description">Descrizione Attività</label>
-            <textarea id="description" rows="3" placeholder="Descrizione Attività"></textarea>
+            <label for="description">Activity Description</label>
+            <textarea id="description" rows="3" placeholder="Activity Description"></textarea>
         </div>
-        <div id="timerDisplay">00:00:00</div>
-        <div id="totalDuration">Durata Totale: 00:00:00</div>
-        <button id="startStopBtn">Avvia</button>
-        <button id="resetBtn" class="reset">Reset Lista</button>
-        <button id="exportBtn" class="export">Esporta in PDF</button>
-        <div class="activities" id="activityList"></div>
+        <div id="timerDisplay">00:00:00</div> <!-- Timer display -->
+        <div id="totalDuration">Total Duration: 00:00:00</div> <!-- Total duration display -->
+        <button id="startStopBtn">Start</button> <!-- Start/Stop button -->
+        <button id="saveLogBtn" class="save">Save Log</button> <!-- Save Log button -->
+        <button id="resetBtn" class="reset">Reset List</button> <!-- Reset List button -->
+        <button id="exportBtn" class="export">Export to PDF</button> <!-- Export to PDF button -->
+        <div class="activities" id="activityList"></div> <!-- Container for saved activities -->
     </div>
 
+    <!-- Include the jsPDF library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-<script>
-    let timer;
-    let startTime;
-    let isRunning = false;
-    let elapsedTime = 0;
-    let isDarkTheme = false;
+    <script>
+        // Variables to manage the timer and activities
+        let timer; // Holds the timer interval
+        let startTime; // Stores the start time of the timer
+        let isRunning = false; // Tracks if the timer is running
+        let isPaused = false; // Tracks if the timer is paused
+        let elapsedTime = 0; // Stores the elapsed time when paused
+        let pausedTime = 0; // Stores the time when the timer was paused
 
-    const startStopBtn = document.getElementById('startStopBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const exportBtn = document.getElementById('exportBtn');
-    const descriptionInput = document.getElementById('description');
-    const activityList = document.getElementById('activityList');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const totalDurationDisplay = document.getElementById('totalDuration');
-    const themeSelect = document.getElementById('themeSelect');
-    const body = document.body;
-    const container = document.querySelector('.container');
+        // DOM elements
+        const startStopBtn = document.getElementById('startStopBtn');
+        const saveLogBtn = document.getElementById('saveLogBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const descriptionInput = document.getElementById('description');
+        const activityList = document.getElementById('activityList');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const totalDurationDisplay = document.getElementById('totalDuration');
 
-    startStopBtn.addEventListener('click', function () {
-        if (!isRunning) {
-            startTime = new Date();
-            localStorage.setItem('startTime', startTime);  // Memorizza l'ora di inizio nel localStorage
-            timer = setInterval(updateTimerDisplay, 1000);
-            startStopBtn.textContent = 'Ferma';
-            startStopBtn.classList.add('stop');
-            isRunning = true;
-        } else {
-            clearInterval(timer);
+        // Event listener for the Start/Stop button
+        startStopBtn.addEventListener('click', function () {
+            if (!isRunning) {
+                // Start the timer
+                startTime = new Date();
+                if (pausedTime > 0) {
+                    // Adjust start time if the timer was paused
+                    startTime = new Date(startTime - pausedTime);
+                    pausedTime = 0;
+                }
+                timer = setInterval(updateTimerDisplay, 1000); // Update the timer every second
+                startStopBtn.textContent = 'Stop';
+                startStopBtn.classList.add('stop');
+                isRunning = true;
+                isPaused = false;
+            } else if (isRunning && !isPaused) {
+                // Pause the timer
+                clearInterval(timer);
+                pausedTime = new Date() - startTime;
+                startStopBtn.textContent = 'Resume';
+                isPaused = true;
+            } else if (isRunning && isPaused) {
+                // Resume the timer
+                startTime = new Date(new Date() - pausedTime);
+                timer = setInterval(updateTimerDisplay, 1000);
+                startStopBtn.textContent = 'Stop';
+                isPaused = false;
+            }
+        });
+
+        // Event listener for the Save Log button
+        saveLogBtn.addEventListener('click', function () {
+            if (!isRunning) {
+                alert("Start the timer before saving the log.");
+                return;
+            }
+
+            // Calculate elapsed time and save the activity
             const endTime = new Date();
             elapsedTime = endTime - startTime;
             const timeSpent = Math.floor(elapsedTime / 1000);
-            const description = descriptionInput.value.trim() || "Descrizione Attività"; // Imposta il testo predefinito
+            const description = descriptionInput.value.trim() || "Activity Description";
 
             saveActivity(description, formatTime(timeSpent), startTime, endTime);
             renderActivities();
             updateTotalDuration();
 
-            descriptionInput.value = ''; // Reset del campo di input
+            // Reset the timer and UI
+            clearInterval(timer);
             timerDisplay.textContent = "00:00:00";
+            descriptionInput.value = '';
             elapsedTime = 0;
-            startStopBtn.textContent = 'Avvia';
-            startStopBtn.classList.remove('stop');
             isRunning = false;
-            localStorage.removeItem('startTime'); // Rimuove l'ora di inizio dal localStorage
-        }
-    });
+            isPaused = false;
+            pausedTime = 0;
+            startStopBtn.textContent = 'Start';
+            startStopBtn.classList.remove('stop');
+        });
 
-    resetBtn.addEventListener('click', function() {
-        if (confirm("Sei sicuro di voler resettare la lista delle attività?")) {
-            localStorage.removeItem('activities');
-            localStorage.removeItem('startTime'); // Resetta anche il timer attivo
+        // Event listener for the Reset List button
+        resetBtn.addEventListener('click', function () {
+            if (confirm("Are you sure you want to reset the activity list?")) {
+                localStorage.removeItem('activities');
+                localStorage.removeItem('startTime');
+                renderActivities();
+                updateTotalDuration();
+            }
+        });
+
+        // Event listener for the Export to PDF button
+        exportBtn.addEventListener('click', function () {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Saved Activities Log', 10, 10); // Add title
+            doc.setFontSize(12);
+
+            // Add total duration at the top
+            const totalSeconds = activities.reduce((sum, activity) => sum + parseTime(activity.timeSpent), 0);
+            const totalTimeSpent = formatTime(totalSeconds);
+            doc.text(`Total Duration: ${totalTimeSpent}`, 10, 20);
+
+            let yPosition = 30; // Starting Y position for activities
+            activities.forEach(activity => {
+                const lines = doc.splitTextToSize(`Activity: ${activity.description}`, 190);
+                lines.forEach((line) => {
+                    if (yPosition + 6 > doc.internal.pageSize.getHeight() - 10) {
+                        doc.addPage(); // Add a new page if content overflows
+                        yPosition = 10;
+                    }
+                    doc.text(line, 10, yPosition);
+                    yPosition += 6;
+                });
+                doc.text(`Start: ${activity.startTime}`, 10, yPosition);
+                yPosition += 6;
+                doc.text(`End: ${activity.endTime}`, 10, yPosition);
+                yPosition += 6;
+                doc.text(`Duration: ${activity.timeSpent}`, 10, yPosition);
+                yPosition += 12;
+
+                doc.setDrawColor(200);
+                doc.line(10, yPosition, 200, yPosition); // Add a separator line
+                yPosition += 5;
+            });
+
+            // Generate a filename with the current date and time
+            const now = new Date();
+            const fileName = `activities_${now.toLocaleDateString('en-US').replace(/\//g, '-')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}.pdf`;
+            doc.save(fileName); // Save the PDF
+        });
+
+        // Function to update the timer display
+        function updateTimerDisplay() {
+            const currentTime = new Date();
+            const timeSpent = Math.floor((currentTime - startTime) / 1000);
+            timerDisplay.textContent = formatTime(timeSpent);
+        }
+
+        // Function to format time as HH:MM:SS
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        // Function to save an activity to localStorage
+        function saveActivity(description, timeSpent, startTime, endTime) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.push({
+                description,
+                timeSpent,
+                startTime: startTime.toLocaleTimeString(),
+                endTime: endTime.toLocaleTimeString(),
+            });
+            localStorage.setItem('activities', JSON.stringify(activities));
+        }
+
+        // Function to render the list of activities
+        function renderActivities() {
+            activityList.innerHTML = '';
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.forEach((activity, index) => {
+                const activityEl = document.createElement('div');
+                activityEl.classList.add('activity');
+                activityEl.innerHTML = `
+                    <div><strong>Activity:</strong> <textarea onchange="editActivity(${index}, this.value)" rows="2">${activity.description}</textarea></div>
+                    <div><strong>Start:</strong> ${activity.startTime}</div>
+                    <div><strong>End:</strong> ${activity.endTime}</div>
+                    <div><strong>Duration:</strong> ${activity.timeSpent}</div>
+                    <button class="delete-btn" onclick="confirmDeleteActivity(${index})">Delete</button>
+                `;
+                activityList.appendChild(activityEl);
+                const separator = document.createElement('div');
+                separator.classList.add('separator');
+                activityList.appendChild(separator);
+            });
+        }
+
+        // Function to confirm deletion of an activity
+        function confirmDeleteActivity(index) {
+            if (confirm("Are you sure you want to delete this activity?")) {
+                deleteActivity(index);
+            }
+        }
+
+        // Function to edit an activity's description
+        function editActivity(index, newDescription) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities[index].description = newDescription;
+            localStorage.setItem('activities', JSON.stringify(activities));
+            renderActivities();
+        }
+
+        // Function to delete an activity
+        function deleteActivity(index) {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            activities.splice(index, 1);
+            localStorage.setItem('activities', JSON.stringify(activities));
             renderActivities();
             updateTotalDuration();
         }
-    });
 
-exportBtn.addEventListener('click', function() {
-    const activities = JSON.parse(localStorage.getItem('activities')) || [];
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    doc.setFontSize(18);
-    doc.text('Lista Attività Salvate', 10, 10);
-    doc.setFontSize(12);
-
-    let yPosition = 20;
-    activities.forEach(activity => {
-        const lines = doc.splitTextToSize(`Attività: ${activity.description}`, 190);
-        lines.forEach((line) => {
-            if (yPosition + 6 > doc.internal.pageSize.getHeight() - 10) { // Controllo se c'è spazio sulla pagina
-                doc.addPage(); // Aggiungo una nuova pagina
-                yPosition = 10; // Resetta la posizione verticale
-            }
-            doc.text(line, 10, yPosition);
-            yPosition += 6;
-        });
-        doc.text(`Inizio: ${activity.startTime}`, 10, yPosition);
-        yPosition += 6;
-        doc.text(`Fine: ${activity.endTime}`, 10, yPosition);
-        yPosition += 6;
-        doc.text(`Tempo: ${activity.timeSpent}`, 10, yPosition);
-        yPosition += 12;
-
-        doc.setDrawColor(200);
-        doc.line(10, yPosition, 200, yPosition); // Linea di separazione
-        yPosition += 5;
-    });
-
-    // Calcola il totale del tempo delle attività
-    const totalSeconds = activities.reduce((sum, activity) => sum + parseTime(activity.timeSpent), 0);
-    const totalTimeSpent = formatTime(totalSeconds);
-
-    // Aggiungi il totale al PDF
-    yPosition += 10; // Spazio prima del totale
-    doc.text(`Durata Totale: ${totalTimeSpent}`, 10, yPosition);
-
-    const now = new Date();
-    const fileName = `attivita_${now.toLocaleDateString('it-IT').replace(/\//g, '-')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}.pdf`;
-    doc.save(fileName);
-});
-
-
-    function updateTimerDisplay() {
-        const currentTime = new Date();
-        const timeSpent = Math.floor((currentTime - startTime) / 1000);
-        timerDisplay.textContent = formatTime(timeSpent);
-    }
-
-    function formatTime(seconds) {
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = seconds % 60;
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-    }
-
-    function saveActivity(description, timeSpent, startTime, endTime) {
-        const activities = JSON.parse(localStorage.getItem('activities')) || [];
-        activities.push({
-            description,
-            timeSpent,
-            startTime: startTime.toLocaleTimeString(),
-            endTime: endTime.toLocaleTimeString(),
-        });
-        localStorage.setItem('activities', JSON.stringify(activities));
-    }
-
-    function renderActivities() {
-        activityList.innerHTML = '';
-        const activities = JSON.parse(localStorage.getItem('activities')) || [];
-        activities.forEach((activity, index) => {
-            const activityEl = document.createElement('div');
-            activityEl.classList.add('activity');
-            if (isDarkTheme) {
-                activityEl.classList.add('dark');
-            }
-            activityEl.innerHTML = `
-                <div><strong>Attività:</strong> <textarea onchange="editActivity(${index}, this.value)" rows="2">${activity.description}</textarea></div>
-                <div><strong>Inizio:</strong> ${activity.startTime}</div>
-                <div><strong>Fine:</strong> ${activity.endTime}</div>
-                <div><strong>Tempo:</strong> ${activity.timeSpent}</div>
-                <button class="delete-btn" onclick="confirmDeleteActivity(${index})">Elimina</button>
-            `;
-            activityList.appendChild(activityEl);
-            const separator = document.createElement('div');
-            separator.classList.add('separator');
-            activityList.appendChild(separator);
-        });
-    }
-
-    function confirmDeleteActivity(index) {
-        if (confirm("Sei sicuro di voler eliminare questa attività?")) {
-            deleteActivity(index);
+        // Function to update the total duration display
+        function updateTotalDuration() {
+            const activities = JSON.parse(localStorage.getItem('activities')) || [];
+            const totalSeconds = activities.reduce((sum, activity) => sum + parseTime(activity.timeSpent), 0);
+            totalDurationDisplay.textContent = `Total Duration: ${formatTime(totalSeconds)}`;
         }
-    }
 
-    function editActivity(index, newDescription) {
-        const activities = JSON.parse(localStorage.getItem('activities')) || [];
-        activities[index].description = newDescription;
-        localStorage.setItem('activities', JSON.stringify(activities));
-        renderActivities();
-    }
-
-    function deleteActivity(index) {
-        const activities = JSON.parse(localStorage.getItem('activities')) || [];
-        activities.splice(index, 1);
-        localStorage.setItem('activities', JSON.stringify(activities));
-        renderActivities();
-        updateTotalDuration();
-    }
-
-    function updateTotalDuration() {
-        const activities = JSON.parse(localStorage.getItem('activities')) || [];
-        const totalSeconds = activities.reduce((sum, activity) => sum + parseTime(activity.timeSpent), 0);
-        totalDurationDisplay.textContent = `Durata Totale: ${formatTime(totalSeconds)}`;
-    }
-
-    function parseTime(timeString) {
-        const parts = timeString.split(':');
-        return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
-    }
-
-    window.onload = function() {
-        // Se c'è un timer in corso, ripristinalo
-        const savedStartTime = localStorage.getItem('startTime');
-        if (savedStartTime) {
-            startTime = new Date(savedStartTime);
-            isRunning = true;
-            startStopBtn.textContent = 'Ferma';
-            startStopBtn.classList.add('stop');
-            timer = setInterval(updateTimerDisplay, 1000);
+        // Function to parse a time string (HH:MM:SS) into seconds
+        function parseTime(timeString) {
+            const parts = timeString.split(':');
+            return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
         }
-        renderActivities();
-        updateTotalDuration();
-    };
 
-    themeSelect.addEventListener('change', function() {
-        isDarkTheme = themeSelect.value === 'dark';
-        body.classList.toggle('dark', isDarkTheme);
-        container.classList.toggle('dark', isDarkTheme);
-        timerDisplay.classList.toggle('dark', isDarkTheme);
-        totalDurationDisplay.classList.toggle('dark', isDarkTheme);
-        renderActivities(); // Rerender delle attività per applicare la modalità scura
-    });
-</script>
+        // On page load, restore the timer and activities
+        window.onload = function () {
+            const savedStartTime = localStorage.getItem('startTime');
+            if (savedStartTime) {
+                startTime = new Date(savedStartTime);
+                isRunning = true;
+                startStopBtn.textContent = 'Stop';
+                startStopBtn.classList.add('stop');
+                timer = setInterval(updateTimerDisplay, 1000);
+            }
+            renderActivities();
+            updateTotalDuration();
+        };
+    </script>
 </body>
 </html>
