@@ -6,7 +6,7 @@
     <title>EasyLog</title>
     <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+<style>
         /* Basic styling for the body */
         body {
             font-family: Arial, sans-serif;
@@ -250,7 +250,7 @@
 
     <!-- Main container for the app -->
     <div class="container">
-        <h1>EasyLog</h1>
+        <h1>EasyLog 1.4</h1>
         <div class="input-group">
             <label for="description">Activity Description</label>
             <textarea id="description" rows="3" placeholder="Activity Description"></textarea>
@@ -300,7 +300,8 @@
             document.body.classList.add('dark-theme');
             themeToggle.innerHTML = '<i class="fas fa-sun"></i>'; // Show sun icon for dark theme
         }
-        // Event listener for the Start/Stop button
+
+        // Event listener for the Start/Pause/Resume button
         startStopBtn.addEventListener('click', function () {
             if (!isRunning) {
                 // Start the timer
@@ -311,7 +312,7 @@
                     pausedTime = 0;
                 }
                 timer = setInterval(updateTimerDisplay, 1000); // Update the timer every second
-                startStopBtn.textContent = 'Stop';
+                startStopBtn.textContent = 'Pause'; // Change button text to "Pause"
                 startStopBtn.classList.add('stop');
                 isRunning = true;
                 isPaused = false;
@@ -319,13 +320,13 @@
                 // Pause the timer
                 clearInterval(timer);
                 pausedTime = new Date() - startTime;
-                startStopBtn.textContent = 'Resume';
+                startStopBtn.textContent = 'Resume'; // Change button text to "Resume"
                 isPaused = true;
             } else if (isRunning && isPaused) {
                 // Resume the timer
                 startTime = new Date(new Date() - pausedTime);
                 timer = setInterval(updateTimerDisplay, 1000);
-                startStopBtn.textContent = 'Stop';
+                startStopBtn.textContent = 'Pause'; // Change button text to "Pause"
                 isPaused = false;
             }
         });
@@ -355,7 +356,7 @@
             isRunning = false;
             isPaused = false;
             pausedTime = 0;
-            startStopBtn.textContent = 'Start';
+            startStopBtn.textContent = 'Start'; // Change button text back to "Start"
             startStopBtn.classList.remove('stop');
         });
 
@@ -407,9 +408,11 @@
                 yPosition += 5;
             });
 
-            // Generate a filename with the current date and time
+            // Generate a filename with the current date and time in ISO 8601 format
             const now = new Date();
-            const fileName = `activities_${now.toLocaleDateString('en-US').replace(/\//g, '-')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}.pdf`;
+            const isoDate = now.toISOString().split('T')[0]; // Get YYYY-MM-DD
+            const isoTime = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // Get HH:MM:SS and replace colons with dashes
+            const fileName = `activities_${isoDate}_${isoTime}.pdf`; // Format: activities_YYYY-MM-DD_HH-MM-SS.pdf
             doc.save(fileName); // Save the PDF
         });
 
@@ -504,7 +507,7 @@
             if (savedStartTime) {
                 startTime = new Date(savedStartTime);
                 isRunning = true;
-                startStopBtn.textContent = 'Stop';
+                startStopBtn.textContent = 'Pause'; // Set button text to "Pause" if timer was running
                 startStopBtn.classList.add('stop');
                 timer = setInterval(updateTimerDisplay, 1000);
             }
